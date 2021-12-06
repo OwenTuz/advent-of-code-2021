@@ -1,12 +1,10 @@
 use std::collections::BTreeMap;
 
-#[derive(Debug)]
 struct Point {
     x: usize,
     y: usize,
 }
 
-#[derive(Debug)]
 struct Line {
     start: Point,
     end: Point,
@@ -31,17 +29,19 @@ fn parse_line(input: &str) -> Line {
 }
 
 fn draw_line(line: &Line, grid: &mut BTreeMap<(usize, usize), usize>) {
-    // horizontal and vertical only for initial implementation
-    for x in line.start.x..=line.end.x {
-        for y in line.start.y..=line.end.y {
+    let mut x = line.start.x;
+    let mut y = line.start.y;
+
+    loop {
             *grid.entry((x,y)).or_insert(0) += 1;
-        }
-    }
-    // lazy hack to get around the fact that rust doesn't do reverse ranges
-    for x in line.end.x..=line.start.x {
-        for y in line.end.y..=line.start.y {
-            *grid.entry((x,y)).or_insert(0) += 1;
-        }
+
+            if x == line.end.x && y == line.end.y {
+                break
+            }
+            if line.end.x > x { x += 1 };
+            if line.end.x < x { x -= 1 };
+            if line.end.y > y { y += 1 };
+            if line.end.y < y { y -= 1 };
     }
 }
 
@@ -69,5 +69,5 @@ fn main() {
         .map(|line| parse_line(line))
         .collect();
     println!("Part 1: Answer is {}", part1(&input));
-//    println!("Part 2: Answer is {}", part2(&input));
+    println!("Part 2: Answer is {}", part2(&input));
 }
